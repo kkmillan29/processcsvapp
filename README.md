@@ -1,6 +1,6 @@
-# Flask CSV Processor
+# ProcessCSVApp
 
-This Flask application provides an endpoint to process CSV data using PySpark. It includes functions to create a unique folder for storing processed data, determine if a given input is a URL or a local file path, download a file from a URL and save it locally, process a CSV file using PySpark, and save the cleaned data and a summary. The main endpoint ("/processcsv") receives CSV data processing requests.
+ProcessCSVApp is a Flask application that provides an endpoint to process CSV data using PySpark. It includes functions to create a unique folder for storing processed data, determine if a given input is a URL or a local file path, download a file from a URL and save it locally, process a CSV file using PySpark, and save the cleaned data and a summary. The main endpoint (`/processcsv`) receives CSV data processing requests.
 
 ## Table of Contents
 
@@ -27,8 +27,8 @@ These instructions will help you set up and run the Flask application on your lo
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your_username/flask-csv-processor.git
-    cd flask-csv-processor
+    git clone https://github.com/your_username/processcsvapp.git
+    cd processcsvapp
     ```
 
 2. Install the required dependencies:
@@ -107,7 +107,3 @@ The application should be running at `http://127.0.0.1:5000/`.
 ## Contributing
 
 Feel free to contribute to this project. Fork the repository, make your changes, and submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
