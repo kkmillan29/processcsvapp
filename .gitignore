@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# IDE-specific files
+.idea/
+.vscode/
+
+# Compiled Python files
+*.pyc
+
+# Compiled C extensions
+*.so
+
+# Distribution/distutils
+/dist/
+build/
+*.egg-info/
+
+# .pyc files should be ignored in the root directory and all subdirectories
+__pycache__/
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# OS-specific files
+.DS_Store
+Thumbs.db
