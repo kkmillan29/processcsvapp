@@ -36,12 +36,19 @@ These instructions will help you set up and run the Flask application on your lo
     ```bash
     pip install -r requirements.txt
     ```
+    or
+   
+   ```bash
+    pip install -r requirements.txt --upgrade
+    ```
+   
 
-3. Run the Flask application:
+4. Run the Flask application:
 
     ```bash
     python app.py
     ```
+   
 
 The application should be running at `http://127.0.0.1:5000/`.
 
