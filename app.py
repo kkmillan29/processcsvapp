@@ -24,7 +24,7 @@ def create_processed_folder():
     unique_id = str(uuid.uuid4())[:8]
     folder_path = os.path.join(app.config['PROCESSED_DATA_FOLDER'], unique_id)
     os.makedirs(folder_path)
-    return folder_path
+    return folder_path,unique_id
 
 def is_url(input_str):
     return input_str.startswith("http://") or input_str.startswith("https://")
@@ -88,15 +88,19 @@ def process_csv_endpoint():
 
         args = parse_arguments()
 
-        folder_path = create_processed_folder()
+        folder_path, folder_name = create_processed_folder()
         cleaned_csv_path, summary_path, error = process_csv(data_path, folder_path)
 
         if error:
             return jsonify({"status": "error", "message": error}), 500
 
         if args.mode == 'server':
-            cleaned_csv_path = f"{args.serverurl}/processed_data/{os.path.basename(cleaned_csv_path)}"
-            summary_path = f"{args.serverurl}/processed_data/{os.path.basename(summary_path)}"
+            base_filename_cleaned = os.path.basename(cleaned_csv_path)
+            base_filename_summary = os.path.basename(summary_path)
+
+
+            cleaned_csv_path = f"{args.serverurl}/processed_data/{folder_name}/{base_filename_cleaned}"
+            summary_path = f"{args.serverurl}/processed_data/{folder_name}/{base_filename_summary}"
 
         return jsonify({
             "status": "success",
