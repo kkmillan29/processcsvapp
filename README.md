@@ -47,11 +47,11 @@ These instructions will help you set up and run the Flask application on your lo
 	
 	For running the code in local:
     ```bash
-    python app.py local
+    python3 app.py local
     ```
     For running the code in server
      ```bash
-    python app.py server --serverurl http://server_url
+    python3 app.py server --serverurl http://server_url
     ```
    
 
