@@ -87,7 +87,7 @@ The local application should be running at `http://127.0.0.1:5000/`.
         
             ```json
             {
-                "data_url": "local_path_to_the_csv_file"
+                "data_url": "/path/to/local/data.csv"
             }
             ```
             or 
