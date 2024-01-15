@@ -6,12 +6,23 @@ import requests
 import uuid
 from urllib.parse import urlparse
 from pathlib import Path
+import argparse
 
 app = Flask(__name__)
 
+# Configuration
+app.config['PROCESSED_DATA_FOLDER'] = "processed_data"
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Process CSV data.')
+    parser.add_argument('mode', choices=['local', 'server'], help='Specify mode: local or server')
+    parser.add_argument('--serverurl', help='Specify server URL when mode is server')
+    args = parser.parse_args()
+    return args
+
 def create_processed_folder():
-    unique_id = str(uuid.uuid4())[:8]  # Extracting the first 8 characters of the UUID
-    folder_path = f"processed_data/{unique_id}"
+    unique_id = str(uuid.uuid4())[:8]
+    folder_path = os.path.join(app.config['PROCESSED_DATA_FOLDER'], unique_id)
     os.makedirs(folder_path)
     return folder_path
 
@@ -30,34 +41,31 @@ def download_file(url, local_path):
 def process_csv(input_path, folder_path):
     try:
         if is_url(input_path):
-            # Download the file from the URL
             filename = os.path.basename(urlparse(input_path).path)
             local_path = f"{folder_path}/{filename}"
             download_file(input_path, local_path)
         elif is_local_path(input_path):
-            # Assume it's a local file path
             filename = os.path.basename(input_path)
             local_path = input_path
         else:
             raise ValueError("Invalid input. Please provide a valid URL or local file path.")
 
         spark = SparkSession.builder.getOrCreate()
-        processed_df,invalid_name_count,empty_airline_code_count= process_data(spark, local_path)
+        processed_df, invalid_name_count, empty_airline_code_count = process_data(spark, local_path)
 
         cleaned_csv_path = f"{folder_path}/cleaned_data_{filename}"
         processed_df.toPandas().to_csv(cleaned_csv_path, index=False)
 
         summary = {
             "total_rows_processed": processed_df.count(),
-            "invalid_name":invalid_name_count,
-            "empty_airline_code":empty_airline_code_count
+            "invalid_name": invalid_name_count,
+            "empty_airline_code": empty_airline_code_count
         }
 
         summary_path = f"{folder_path}/summary_{os.path.splitext(filename)[0]}.json"
         with open(summary_path, "w") as summary_file:
             summary_file.write(str(summary))
 
-        # If data is local, return the full path
         if is_local_path(input_path):
             cleaned_csv_path = os.path.abspath(cleaned_csv_path)
             summary_path = os.path.abspath(summary_path)
@@ -78,12 +86,17 @@ def process_csv_endpoint():
         if not data_path:
             return jsonify({"status": "error", "message": "Missing 'data_path' in request JSON payload"}), 400
 
-        folder_path = create_processed_folder()
+        args = parse_arguments()
 
+        folder_path = create_processed_folder()
         cleaned_csv_path, summary_path, error = process_csv(data_path, folder_path)
 
         if error:
             return jsonify({"status": "error", "message": error}), 500
+
+        if args.mode == 'server':
+            cleaned_csv_path = f"{args.serverurl}/processed_data/{os.path.basename(cleaned_csv_path)}"
+            summary_path = f"{args.serverurl}/processed_data/{os.path.basename(summary_path)}"
 
         return jsonify({
             "status": "success",
